@@ -11,7 +11,7 @@ public class NewGameController : ControllerBase
     [HttpPost(Name = "CreateGame")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public ActionResult CreateGame([FromQuery] int width, [FromQuery] int height, [FromQuery] int mines_count)
+    public ActionResult<GameDTO> CreateGame([FromQuery] int width, [FromQuery] int height, [FromQuery] int mines_count)
     {
         if (width < 2 || width > 30)
         {
@@ -28,9 +28,11 @@ public class NewGameController : ControllerBase
             return BadRequest($"Количество мин должно быть не менее 1 и строго менее количества ячеек {height * width - 1}");
         }
 
+        //Заглушка вместо БЛ
         Console.WriteLine($"Новая игра создана. Размер поля {width} на {height}. Количество мин - {mines_count}.");
 
-        return Ok(new GameDTO() { });
+        //Добавить вывод ДТО после обработки
+        return Ok();
     }
 }
 
