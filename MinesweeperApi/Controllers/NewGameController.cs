@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using MinesweeperApi.Models;
 using MinesweeperApi.Models.DTO;
+using MinesweeperApi.Models.Storage;
+using MinesweeperApi.Servises;
 
 namespace MinesweeperApi.Controllers;
 
@@ -8,31 +11,48 @@ namespace MinesweeperApi.Controllers;
 public class NewGameController : ControllerBase
 {
 
+    DbEmul dbEmul = new DbEmul();
+
     [HttpPost(Name = "CreateGame")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public ActionResult<GameDTO> CreateGame([FromQuery] int width, [FromQuery] int height, [FromQuery] int mines_count)
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public ActionResult<GameDTO> CreateGame([FromBody] GameInitDTO gameInitDTO)
     {
-        if (width < 2 || width > 30)
+        if (gameInitDTO.width < 2 || gameInitDTO.width > 30)
         {
             return BadRequest("Ширина поля должна быть не менее 2 и не более 30");
         }
 
-        if (height < 2 || height > 30)
+        if (gameInitDTO.height < 2 || gameInitDTO.height > 30)
         {
             return BadRequest("Высота поля должна быть не менее 2 и не более 30");
         }
 
-        if (mines_count < 0 || mines_count > height * width - 1)
+        if (gameInitDTO.mines_count < 0 || gameInitDTO.mines_count > gameInitDTO.height * gameInitDTO.width - 1)
         {
-            return BadRequest($"Количество мин должно быть не менее 1 и строго менее количества ячеек {height * width - 1}");
+            return BadRequest($"Количество мин должно быть не менее 1 и строго менее количества ячеек {gameInitDTO.height * gameInitDTO.width - 1}");
         }
 
-        //Заглушка вместо БЛ
-        Console.WriteLine($"Новая игра создана. Размер поля {width} на {height}. Количество мин - {mines_count}.");
+        Game currentGame;
+        try
+        {
+            currentGame = CreateNewGame.CreateGame(gameInitDTO);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
 
-        //Добавить вывод ДТО после обработки
-        return Ok();
+        dbEmul.Storage.Add(currentGame.game_id, currentGame);
+
+        var gameDTO = GameDTOMapper.MapToGameDTO(currentGame);
+        FieldTransform.HideMines(gameDTO);
+
+        Console.WriteLine($"Новая игра создана. Размер поля {gameInitDTO.width} на {gameInitDTO.height}. Количество мин - {gameInitDTO.mines_count}.");
+
+        //Добавить возврат ДТО GameDTO после обработки
+        return Ok(gameDTO);
     }
 }
 
