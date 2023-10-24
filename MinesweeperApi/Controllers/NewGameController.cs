@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using MinesweeperApi.Models;
 using MinesweeperApi.Models.DTO;
 using MinesweeperApi.Models.Storage;
@@ -10,15 +11,27 @@ namespace MinesweeperApi.Controllers;
 [ApiController]
 public class NewGameController : ControllerBase
 {
+    private readonly ApplicationDbContext _db;
 
-    DbEmul dbEmul = new DbEmul();
+    public NewGameController(ApplicationDbContext db)
+    {
+        _db = db;
+    }
+
+    [HttpOptions]
+    public string OptionsNewGame()
+    {
+        return null;
+    }
 
     [HttpPost(Name = "CreateGame")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<GameDTO> CreateGame([FromBody] GameInitDTO gameInitDTO)
+    public ActionResult<GameDTO> CreateGame([FromBody] NewGameRequest gameInitDTO)
     {
+        _db.Database.EnsureCreated();
+
         if (gameInitDTO.width < 2 || gameInitDTO.width > 30)
         {
             return BadRequest("Ширина поля должна быть не менее 2 и не более 30");
@@ -35,6 +48,7 @@ public class NewGameController : ControllerBase
         }
 
         Game currentGame;
+
         try
         {
             currentGame = CreateNewGame.CreateGame(gameInitDTO);
@@ -44,7 +58,7 @@ public class NewGameController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
-        dbEmul.Storage.Add(currentGame.game_id, currentGame);
+        currentGame.game_id = DbQueries.SaveNewGame(currentGame, _db);
 
         var gameDTO = GameDTOMapper.MapToGameDTO(currentGame);
         FieldTransform.HideMines(gameDTO);

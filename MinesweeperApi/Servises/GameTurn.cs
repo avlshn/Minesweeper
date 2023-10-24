@@ -5,14 +5,12 @@ namespace MinesweeperApi.Servises;
 
 public static class GameTurn
 {
-    public static Game GetTurnResult(Game game, TurnDTO turn)
+    public static Game GetTurnResult(Game game, GameTurnRequest turn)
     {
         if (game.field[turn.col][turn.row] != "Q" && game.field[turn.col][turn.row] != " ") throw new ArgumentOutOfRangeException("Уже открытая ячейка");
 
         var currentGame = game;
-        currentGame.turn_number++;
-
-
+        
         if (game == null) throw new ArgumentNullException(nameof(game));
         if (turn == null) throw new ArgumentNullException(nameof(turn));
 
@@ -42,7 +40,7 @@ public static class GameTurn
         return currentGame;
     }
 
-    public static Game GameOver(Game game)
+    private static Game GameOver(Game game)
     {
         var currentGame = game;
 
@@ -60,7 +58,7 @@ public static class GameTurn
         return currentGame;
     }
 
-    public static void OpenCell(Game game, int col, int row)
+    private static void OpenCell(Game game, int col, int row)
     {
         int neighboring_mines = 0;
 
@@ -78,6 +76,8 @@ public static class GameTurn
         }
 
         game.field[col][row] = neighboring_mines.ToString();
+
+        game.turn_number++;
 
         if (neighboring_mines == 0)
         {

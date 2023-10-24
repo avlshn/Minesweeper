@@ -18,9 +18,9 @@
             Console.WriteLine($"Game ID: {game_id}\nWidth: {width}\nHeight: {height}\n" +
         $"Mines count: {mines_count}\nCompleted: {completed}");
             Console.WriteLine();
-            for (int x = 0; x < 10; x++)
+            for (int y = 0; y < height; y++)
             {
-                for (int y = 0; y < 10; y++)
+                for (int x = 0; x < width; x++)
                 {
                     Console.Write($"\"{field[x][y]}\" ");
                 }
