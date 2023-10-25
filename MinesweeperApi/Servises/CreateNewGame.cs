@@ -3,10 +3,16 @@ using MinesweeperApi.Models.DTO;
 
 namespace MinesweeperApi.Servises;
 
+/// <summary>
+/// Service class with methods to create new game
+/// </summary>
 public static class CreateNewGame
 {
-
-    //Jugged array version
+    /// <summary>
+    /// Creates new game, based on request.
+    /// </summary>
+    /// <param name="gameInitDTO"></param>
+    /// <returns>New game class with empty ID field</returns>
     public static Game CreateGame(NewGameRequest gameInitDTO)
     {
         Game game = new Game()
@@ -26,6 +32,11 @@ public static class CreateNewGame
         return game;
     }
 
+
+    /// <summary>
+    /// Field generation
+    /// </summary>
+    /// <param name="game"></param>
     private static void GenerateField(Game game)
     {
         for (int x = 0; x < game.width; x++)

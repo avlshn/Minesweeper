@@ -1,5 +1,8 @@
 ﻿namespace MinesweeperApi.Models;
 
+/// <summary>
+/// Game data entity class
+/// </summary>
 public class Game
 {
     public Guid game_id { get; set; }

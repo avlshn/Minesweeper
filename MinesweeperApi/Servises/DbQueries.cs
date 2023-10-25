@@ -4,6 +4,9 @@ using MinesweeperApi.Models.Storage;
 
 namespace MinesweeperApi.Servises;
 
+/// <summary>
+/// DB queries service class
+/// </summary>
 public static class DbQueries
 {
     /// <summary>

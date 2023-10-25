@@ -4,6 +4,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MinesweeperApi.Models.Storage;
 
+/// <summary>
+/// DB entity with game information. Some redundant information is not stored in DB.
+/// </summary>
 public class GameDbEntity
 {
     [Key]
