@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using MinesweeperApi.Models.DTO;
 using MinesweeperApi.Models.Storage;
 using MinesweeperApi.Servises;
@@ -7,6 +8,7 @@ namespace MinesweeperApi.Controllers;
 
 [Route("api/turn")]
 [ApiController]
+
 public class TurnController : ControllerBase
 {
     private readonly ApplicationDbContext _db;
@@ -22,7 +24,6 @@ public class TurnController : ControllerBase
 
     public ActionResult<GameDTO> GetTurnResult([FromBody] GameTurnRequest turnDTO)
     {
-        
         
         if (turnDTO.row < 0 || turnDTO.col < 0)
         {
@@ -67,7 +68,6 @@ public class TurnController : ControllerBase
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
 
-        //Возврат игры в БД
         DbQueries.UpdateGame(currentGame, _db);
 
         GameDTO gameDTO = GameDTOMapper.MapToGameDTO(currentGame);

@@ -9,6 +9,7 @@ namespace MinesweeperApi.Controllers;
 
 [Route("api/new")]
 [ApiController]
+
 public class NewGameController : ControllerBase
 {
     private readonly ApplicationDbContext _db;
@@ -18,11 +19,11 @@ public class NewGameController : ControllerBase
         _db = db;
     }
 
-    [HttpOptions]
-    public string OptionsNewGame()
-    {
-        return null;
-    }
+    //[HttpOptions]
+    //public string OptionsNewGame()
+    //{
+    //    return null;
+    //}
 
     [HttpPost(Name = "CreateGame")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -30,8 +31,7 @@ public class NewGameController : ControllerBase
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public ActionResult<GameDTO> CreateGame([FromBody] NewGameRequest gameInitDTO)
     {
-        _db.Database.EnsureCreated();
-
+        
         if (gameInitDTO.width < 2 || gameInitDTO.width > 30)
         {
             return BadRequest("Ширина поля должна быть не менее 2 и не более 30");
