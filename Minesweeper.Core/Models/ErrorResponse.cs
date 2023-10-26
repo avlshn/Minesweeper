@@ -1,4 +1,4 @@
-﻿namespace MinesweeperApi.Models.DTO;
+﻿namespace Minesweeper.Core.Models;
 
 /// <summary>
 /// Error DTO record class
