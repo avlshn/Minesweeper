@@ -18,7 +18,7 @@ public static class FieldTransform
         {
             for (int y = 0; y < gameDTO.height; y++)
             {
-                if (gameDTO.field[x][y] == "Q") gameDTO.field[x][y] = " ";
+                if (gameDTO.field[y][x] == "Q") gameDTO.field[y][x] = " ";
             }
         }
         return gameDTO;

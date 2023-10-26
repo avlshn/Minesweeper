@@ -62,20 +62,18 @@ public class TurnController : ControllerBase
         {
             return BadRequest(new ErrorResponse(ex.Message));
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-            return StatusCode(StatusCodes.Status500InternalServerError);
-        }
+        //catch (Exception ex)
+        //{
+        //    Console.WriteLine(ex.Message);
+        //    return StatusCode(StatusCodes.Status500InternalServerError);
+        //}
 
         DbQueries.UpdateGame(currentGame, _db);
 
         GameDTO gameDTO = GameDTOMapper.MapToGameDTO(currentGame);
 
         gameDTO = FieldTransform.HideMines(gameDTO);
-
-        gameDTO.Print();
-        
+   
         return Ok(gameDTO);
     }
 }

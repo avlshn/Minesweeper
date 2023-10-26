@@ -21,11 +21,11 @@ public static class CreateNewGame
             height = gameInitDTO.height,
             width = gameInitDTO.width,
             mines_count = gameInitDTO.mines_count,
-            field = new string[gameInitDTO.width][]
+            field = new string[gameInitDTO.height][]
         };
 
-        for (int i = 0; i < gameInitDTO.width; i++)
-            game.field[i] = new string[gameInitDTO.height];
+        for (int i = 0; i < gameInitDTO.height; i++)
+            game.field[i] = new string[gameInitDTO.width];
 
         GenerateField(game);
 
@@ -43,7 +43,7 @@ public static class CreateNewGame
         {
             for (int y = 0; y < game.height; y++)
             {
-                game.field[x][y] = " ";
+                game.field[y][x] = " ";
             }
         }
 
@@ -55,9 +55,9 @@ public static class CreateNewGame
             int x = rnd.Next(game.width);
             int y = rnd.Next(game.height);
 
-            if (game.field[x][y] == " ")
+            if (game.field[y][x] == " ")
             {
-                game.field[x][y] = "Q";
+                game.field[y][x] = "Q";
                 current_mines++;
             }
         }

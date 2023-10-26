@@ -14,18 +14,4 @@ public class Game
 
     public int turn_number { get; set; }
 
-    public void Print()
-    {
-        Console.WriteLine($"Game ID: {game_id}\nWidth: {width}\nHeight: {height}\n" +
-    $"Mines count: {mines_count}\nCompleted: {completed}");
-        Console.WriteLine();
-        for (int y = 0; y < height; y++)
-        {
-            for (int x = 0; x < width; x++)
-            {
-                Console.Write($"\"{field[x][y]}\" ");
-            }
-            Console.WriteLine();
-        }
-    }
 }

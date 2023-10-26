@@ -18,16 +18,16 @@ public static class GameTurn
     /// <exception cref="ArgumentNullException">Throws if one of arguments is null.</exception>
     public static Game GetTurnResult(Game game, GameTurnRequest turn)
     {
-        if (game.field[turn.col][turn.row] != "Q" && game.field[turn.col][turn.row] != " ") throw new ArgumentOutOfRangeException("Уже открытая ячейка");
+        if (game.field[turn.row][turn.col] != "Q" && game.field[turn.row][turn.col] != " ") throw new ArgumentOutOfRangeException("Уже открытая ячейка");
 
         var currentGame = game;
         
         if (game == null) throw new ArgumentNullException(nameof(game));
         if (turn == null) throw new ArgumentNullException(nameof(turn));
 
-        if (game.field[turn.col][turn.row] == "Q" && !game.completed) return currentGame = GameOver(game);
+        if (game.field[turn.row][turn.col] == "Q" && !game.completed) return currentGame = GameOver(game);
 
-        OpenCell(currentGame, turn.col, turn.row);
+        OpenCell(currentGame, turn.row, turn.col);
 
         if (currentGame.turn_number >= game.width * game.height - game.mines_count) return currentGame = Victory(currentGame);
 
@@ -49,7 +49,7 @@ public static class GameTurn
         {
             for (int y = 0; y < currentGame.height; y++)
             {
-                if (currentGame.field[x][y] == "Q") currentGame.field[x][y] = "M";
+                if (currentGame.field[y][x] == "Q") currentGame.field[y][x] = "M";
             }
         }
 
@@ -70,8 +70,8 @@ public static class GameTurn
         {
             for (int y = 0; y < currentGame.height; y++)
             {
-                if (currentGame.field[x][y] == " ") OpenCell(currentGame, x, y);
-                if (currentGame.field[x][y] == "Q") currentGame.field[x][y] = "X";
+                if (currentGame.field[y][x] == " ") OpenCell(currentGame, y, x);
+                if (currentGame.field[y][x] == "Q") currentGame.field[y][x] = "X";
             }
         }
 
@@ -83,11 +83,11 @@ public static class GameTurn
     /// <param name="game">Game entity to process</param>
     /// <param name="col">Column number</param>
     /// <param name="row">Row number</param>
-    private static void OpenCell(Game game, int col, int row)
+    private static void OpenCell(Game game, int row, int col)
     {
         int neighboring_mines = 0;
 
-        if (game.field[col][row] != " ") return;
+        if (game.field[row][col] != " ") return;
 
         for (int i = 0; i < 9; i++)
         {
@@ -99,10 +99,10 @@ public static class GameTurn
             if (x < 0 || x >= game.width) continue;
             if (y < 0 || y >= game.height) continue;
 
-            if (game.field[x][y] == "Q" || game.field[x][y] == "M" || game.field[x][y] == "X") neighboring_mines++;
+            if (game.field[y][x] == "Q" || game.field[y][x] == "M" || game.field[y][x] == "X") neighboring_mines++;
         }
 
-        game.field[col][row] = neighboring_mines.ToString();
+        game.field[row][col] = neighboring_mines.ToString();
 
         game.turn_number++;
 
@@ -110,13 +110,15 @@ public static class GameTurn
         {
             for (int i = 0; i < 9; i++)
             {
+                if (i == 4) continue;
+
                 int x = col + i % 3 - 1;
                 int y = row + i / 3 - 1;
 
                 if (x < 0 || x >= game.width) continue;
                 if (y < 0 || y >= game.height) continue;
 
-                OpenCell(game, x, y);
+                OpenCell(game, y, x);
             }
         }
     }

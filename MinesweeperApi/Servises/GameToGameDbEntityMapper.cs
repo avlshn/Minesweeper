@@ -47,8 +47,8 @@ public static class GameToGameDbEntityMapper
         if (game != null)
         game.field = JsonSerializer.Deserialize<string[][]>(dbEntity.field);
 
-        game.width = game.field.Length;
-        game.height = game.field[0].Length;
+        game.height = game.field.Length;
+        game.width = game.field[0].Length;
 
         return game;
     }
