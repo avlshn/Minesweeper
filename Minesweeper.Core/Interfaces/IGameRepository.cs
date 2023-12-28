@@ -12,21 +12,21 @@ public interface IGameRepository
     /// </summary>
     /// <param name="game">Game to save</param>
     /// <returns>Id of saved game</returns>
-    public Guid SaveNewGame(Game game);
+    public Task<Guid> SaveNewGameAsync(Game game);
 
     /// <summary>
     /// Gets game instance from DB by id
     /// </summary>
     /// <param name="id">Game ID</param>
     /// <returns>Game entity from DB</returns>
-    public Game? GetGameById(Guid id);
+    public Task<Game?> GetGameByIdAsync(Guid id);
 
     /// <summary>
     /// Updates game in DB
     /// </summary>
     /// <param name="game">Game to update</param>
 
-    public void UpdateGame(Game game);
+    public Task UpdateGameAsync(Game game);
 
 }
 

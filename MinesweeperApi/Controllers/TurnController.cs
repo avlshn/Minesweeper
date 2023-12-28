@@ -29,33 +29,17 @@ public class TurnController : ControllerBase
     [HttpPost(Name = "GetTurnResult")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public ActionResult<GameDTO> GetTurnResult([FromBody] GameTurnRequest turnDTO)
+    public async Task<ActionResult<GameDTO>> GetTurnResultAsync([FromBody] GameTurnRequest turnDTO)
     {
         
         if (turnDTO.row < 0 || turnDTO.col < 0)
         {
-            return BadRequest(new ErrorResponse("Неверный индекс"));
+            return BadRequest(new { error = "Неверный индекс" });
         }
 
         GameDTO gameDTO;
-        try
-        {
-            gameDTO = _gameLogic.MakeTurn(turnDTO);
-        }
-        catch (ArgumentNullException ex)
-        {
-            Console.WriteLine(ex.Message);
-            return StatusCode(StatusCodes.Status500InternalServerError);
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(new ErrorResponse(ex.Message));
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-            return StatusCode(StatusCodes.Status500InternalServerError);
-        }
+
+            gameDTO = await _gameLogic.MakeTurnAsync(turnDTO);
 
         return Ok(gameDTO);
     }

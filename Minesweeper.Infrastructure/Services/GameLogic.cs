@@ -1,4 +1,5 @@
-﻿using Minesweeper.Core.Interfaces;
+﻿using Minesweeper.Core.Exceptions;
+using Minesweeper.Core.Interfaces;
 using Minesweeper.Core.Models;
 
 namespace Minesweeper.Infrastructure.Services
@@ -37,13 +38,13 @@ namespace Minesweeper.Infrastructure.Services
         /// <param name="gameInitDTO">Request with initial game information</param>
         /// <returns>Game DTO with new game</returns>
 
-        public GameDTO CreateGame(NewGameRequest gameInitDTO)
+        public async Task<GameDTO> CreateGameAsync(NewGameRequest gameInitDTO)
         {
             Game currentGame;
 
             currentGame = _gameHandler.CreateGame(gameInitDTO);
 
-            currentGame.GameId = _gameRepository.SaveNewGame(currentGame);
+            currentGame.GameId = await _gameRepository.SaveNewGameAsync(currentGame);
 
             var gameDTO = _gameDTOMapper.MapToGameDTO(currentGame);
 
@@ -57,23 +58,23 @@ namespace Minesweeper.Infrastructure.Services
         /// <returns>Game DTO with updated game information</returns>
         /// <exception cref="ArgumentException">Turn processing error, see ex.message</exception>
 
-        public GameDTO MakeTurn(GameTurnRequest gameTurnRequest)
+        public async Task<GameDTO> MakeTurnAsync(GameTurnRequest gameTurnRequest)
         {
-            var currentGame = _gameRepository.GetGameById(gameTurnRequest.game_id);
+            var currentGame = await _gameRepository.GetGameByIdAsync(gameTurnRequest.game_id);
 
             if (currentGame == null)
             {
-                throw new ArgumentException("Игра с таким ID не найдена");
+                throw new KeyNotFoundException("Игра с таким ID не найдена");
             }
 
             if (gameTurnRequest.row >= currentGame.Height || gameTurnRequest.col >= currentGame.Width)
             {
-                throw new ArgumentException("Неверный индекс");
+                throw new ArgumentOutOfRangeException("Неверный индекс");
             }
 
             if (currentGame.IsCompleted == true)
             {
-                throw new ArgumentException("Игра завершена");
+                throw new GameCompletedException("Игра завершена");
             }
 
 
@@ -81,7 +82,7 @@ namespace Minesweeper.Infrastructure.Services
 
 
 
-            _gameRepository.UpdateGame(currentGame);
+            await _gameRepository.UpdateGameAsync(currentGame);
 
             GameDTO gameDTO = _gameDTOMapper.MapToGameDTO(currentGame);
 

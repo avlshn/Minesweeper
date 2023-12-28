@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Minesweeper.Core.Interfaces;
 using Minesweeper.Infrastructure.Services;
+using MinesweeperApi.Exceptions;
 using MinesweeperApi.Models.Storage;
 using MinesweeperApi.Servises;
 using System.Reflection;
@@ -35,20 +36,21 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 
+app.UseMiddleware<ExceptionHandlerMiddleware>();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-//var dbcontext = app.Services.GetService(typeof(ApplicationDbContext));
 
 app.UseHttpsRedirection();
+
+app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
 app.Run();

@@ -1,4 +1,5 @@
-﻿using Minesweeper.Core.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using Minesweeper.Core.Interfaces;
 using Minesweeper.Core.Models;
 using MinesweeperApi.Models.Storage;
 
@@ -29,11 +30,11 @@ public class GameRepositoryMSSQL : IGameRepository
     /// </summary>
     /// <param name="game">Game to save</param>
     /// <returns>Id of saved game</returns>
-    public Guid SaveNewGame(Game game)
+    public async Task<Guid> SaveNewGameAsync(Game game)
     {
         var entity = _entityMapper.GameToGameDbEntity(game);
-        _db.Games.Add(entity);
-        _db.SaveChanges();
+        await _db.Games.AddAsync(entity);
+        await _db.SaveChangesAsync();
         return entity.Id;
     }
 
@@ -43,9 +44,9 @@ public class GameRepositoryMSSQL : IGameRepository
     /// </summary>
     /// <param name="id">Game ID</param>
     /// <returns>Game entity from DB</returns>
-    public Game? GetGameById(Guid id)
+    public async Task<Game?> GetGameByIdAsync(Guid id)
     {
-        var game = _db.Games.FirstOrDefault(x => x.Id == id);
+        var game = await _db.Games.FirstOrDefaultAsync(x => x.Id == id);
         if (game != null)
             return _entityMapper.GameDbEntityToGame(game);
         else return null;
@@ -56,7 +57,7 @@ public class GameRepositoryMSSQL : IGameRepository
     /// Updates game in DB
     /// </summary>
     /// <param name="game">Game to update</param>
-    public void UpdateGame(Game game)
+    public async Task UpdateGameAsync(Game game)
     {
         var saveGame = _db.Games.FirstOrDefault(x => x.Id == game.GameId);
         var gameDb = _entityMapper.GameToGameDbEntity(game);
@@ -66,6 +67,6 @@ public class GameRepositoryMSSQL : IGameRepository
         saveGame.Field = gameDb.Field;
         saveGame.IsCompleted = gameDb.IsCompleted;
 
-        _db.SaveChanges();
+        await _db.SaveChangesAsync();
     }
 }

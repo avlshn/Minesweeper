@@ -12,7 +12,7 @@ public interface IGameLogic
     /// </summary>
     /// <param name="gameInitDTO">Request with initial game information</param>
     /// <returns>Game DTO with new game</returns>
-    public GameDTO CreateGame(NewGameRequest gameInitDTO);
+    public Task<GameDTO> CreateGameAsync(NewGameRequest gameInitDTO);
 
     /// <summary>
     /// Calculates turn, saves to Db, returns gameDTO
@@ -20,6 +20,6 @@ public interface IGameLogic
     /// <param name="gameTurnRequest">Request with turn information</param>
     /// <returns>Game DTO with updated game information</returns>
     /// <exception cref="ArgumentException">Turn processing error, see ex.message</exception>
-    public GameDTO MakeTurn(GameTurnRequest gameTurnRequest);
+    public Task<GameDTO> MakeTurnAsync(GameTurnRequest gameTurnRequest);
 }
 

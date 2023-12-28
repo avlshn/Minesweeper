@@ -31,36 +31,30 @@ public class NewGameController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<GameDTO> CreateGame([FromBody] NewGameRequest gameInitDTO)
+    public async Task<ActionResult<GameDTO>> CreateGameAsync([FromBody] NewGameRequest gameInitDTO)
     {
 
 
         
         if (gameInitDTO.width < 2 || gameInitDTO.width > 30)
         {
-            return BadRequest(new ErrorResponse("Ширина поля должна быть не менее 2 и не более 30"));
+            return BadRequest(new { error = "Ширина поля должна быть не менее 2 и не более 30" });
         }
 
         if (gameInitDTO.height < 2 || gameInitDTO.height > 30)
         {
-            return BadRequest(new ErrorResponse("Высота поля должна быть не менее 2 и не более 30"));
+            return BadRequest(new { error = "Высота поля должна быть не менее 2 и не более 30" });
         }
 
         if (gameInitDTO.mines_count < 0 || gameInitDTO.mines_count > gameInitDTO.height * gameInitDTO.width - 1)
         {
-            return BadRequest(new ErrorResponse($"Количество мин должно быть не менее 1 и строго менее количества ячеек {gameInitDTO.height * gameInitDTO.width - 1}"));
+            return BadRequest(new { error = $"Количество мин должно быть не менее 1 и строго менее количества ячеек {gameInitDTO.height * gameInitDTO.width - 1}" });
         }
 
         GameDTO newGame;
 
-        try
-        {
-            newGame = _gameLogic.CreateGame(gameInitDTO);
-        }
-        catch (Exception)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError);
-        }
+        newGame = await _gameLogic.CreateGameAsync(gameInitDTO);
+
 
         return Ok(newGame);
     }
